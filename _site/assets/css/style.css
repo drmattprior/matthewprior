@@ -1,0 +1,104 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+h1 { font-size: 22px; font-weight: 500; margin: 0 0 6px; }
+
+.postnominals {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+}
+
+.role {
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 1.75rem;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: #f0f0f0;
+  color: #555;
+}
+
+.badge.info { background: #e6f1fb; color: #0c447c; }
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #1a1a1a;
+  font-size: 15px;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.links a:hover {
+  background: #f8f8f8;
+}
+
+.links a:active {
+  transform: scale(0.98);
+}
+
+.links i.left {
+  font-size: 18px;
+  color: #777;
+  flex-shrink: 0;
+}
+
+.links i.right {
+  font-size: 16px;
+  color: #aaa;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.contact {
+  font-size: 13px;
+  color: #999;
+  margin: 2rem 0 0;
+}
+
+@media (max-width: 400px) {
+  body { padding: 1.5rem 1rem; }
+  .avatar { width: 150px; height: 150px; }
+}
+}
