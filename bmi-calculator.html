@@ -91,6 +91,16 @@
     font-size: 14px;
   }
   .placeholder { color: #9ca3af; font-size: 15px; }
+  .targets { margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9; }
+  .target-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .target-label { color: #6b7280; }
+  .target-value { color: #111827; font-weight: 600; }
   .footnote { font-size: 12px; color: #9ca3af; text-align: center; margin-top: 14px; line-height: 1.5; }
 </style>
 </head>
@@ -212,11 +222,31 @@
     else if (bmi < 30) { label = 'Overweight'; color = '#f59e0b'; }
     else { label = 'Obese'; color = '#dc2626'; }
 
+    const weight30 = 30 * heightInMeters * heightInMeters;
+    const weight35 = 35 * heightInMeters * heightInMeters;
+
     resultArea.innerHTML = `
       <div class="result-label">Your BMI</div>
       <div class="result-value">${bmi.toFixed(1)}</div>
       <div class="result-badge" style="background-color:${color}20;color:${color}">${label}</div>
+      <div class="targets">
+        <div class="target-row">
+          <span class="target-label">Weight at BMI 30</span>
+          <span class="target-value">${formatWeight(weight30)}</span>
+        </div>
+        <div class="target-row">
+          <span class="target-label">Weight at BMI 35</span>
+          <span class="target-value">${formatWeight(weight35)}</span>
+        </div>
+      </div>
     `;
+  }
+
+  function formatWeight(kg) {
+    const totalLb = kg / 0.453592;
+    const stone = Math.floor(totalLb / 14);
+    const lb = Math.round(totalLb % 14);
+    return `${kg.toFixed(1)} kg (${stone}st ${lb}lb)`;
   }
 </script>
 </body>
