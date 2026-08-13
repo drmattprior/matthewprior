@@ -222,6 +222,9 @@
     else if (bmi < 30) { label = 'Overweight'; color = '#f59e0b'; }
     else { label = 'Obese'; color = '#dc2626'; }
 
+    const weight18 = 18 * heightInMeters * heightInMeters;
+    const weight20 = 20 * heightInMeters * heightInMeters;
+    const weight25 = 25 * heightInMeters * heightInMeters;
     const weight30 = 30 * heightInMeters * heightInMeters;
     const weight35 = 35 * heightInMeters * heightInMeters;
 
@@ -230,6 +233,18 @@
       <div class="result-value">${bmi.toFixed(1)}</div>
       <div class="result-badge" style="background-color:${color}20;color:${color}">${label}</div>
       <div class="targets">
+        <div class="target-row">
+          <span class="target-label">Weight at BMI 30</span>
+          <span class="target-value">${formatWeight(weight18)}</span>
+        </div>
+        <div class="target-row">
+          <span class="target-label">Weight at BMI 30</span>
+          <span class="target-value">${formatWeight(weight20)}</span>
+        </div>
+        <div class="target-row">
+          <span class="target-label">Weight at BMI 30</span>
+          <span class="target-value">${formatWeight(weight25)}</span>
+        </div>
         <div class="target-row">
           <span class="target-label">Weight at BMI 30</span>
           <span class="target-value">${formatWeight(weight30)}</span>
