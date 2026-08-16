@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="VTE Risk">
+<title>IVF VTE Risk Assessment</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8fafc;
+    display: flex;
+    justify-content: center;
+    padding: 20px 14px 40px;
+  }
+  .container { width: 100%; max-width: 460px; }
+  h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; color: #111827; }
+  .subtitle { font-size: 12px; color: #9ca3af; margin-bottom: 16px; line-height: 1.5; }
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .section-title {
+    font-weight: 700;
+    color: #111827;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .section-note {
+    font-size: 11.5px;
+    color: #9ca3af;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .item:last-child { border-bottom: none; }
+  .item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: #111827;
+  }
+  .item label {
+    font-size: 13.5px;
+    color: #374151;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .item .pts {
+    font-size: 11.5px;
+    color: #9ca3af;
+    font-weight: 600;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .flag { color: #b45309; }
+  select.cancer-select {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #111827;
+  }
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .toggle-row label { font-size: 13.5px; color: #374151; flex: 1; line-height: 1.4; }
+  .switch {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background-color: #e5e7eb; border-radius: 26px; transition: .2s;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 20px; width: 20px;
+    left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s;
+  }
+  input:checked + .slider { background-color: #111827; }
+  input:checked + .slider:before { transform: translateX(18px); }
+  .calc-btn {
+    width: 100%;
+    padding: 15px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background-color: #111827;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin: 4px 0 14px;
+  }
+  .result-card { text-align: left; }
+  .result-top { text-align: center; margin-bottom: 14px; }
+  .result-label {
+    font-size: 12px; color: #9ca3af; font-weight: 600;
+    letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  .result-score { font-size: 42px; font-weight: 800; color: #111827; margin: 4px 0 6px; }
+  .result-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .guidance-title { font-weight: 700; font-size: 13.5px; color: #111827; margin: 14px 0 6px; }
+  .guidance-list { margin: 0; padding-left: 18px; }
+  .guidance-list li { font-size: 13px; color: #374151; margin-bottom: 7px; line-height: 1.5; }
+  .specialist-banner {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .caution-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #991b1b;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .placeholder { color: #9ca3af; font-size: 14px; text-align: center; }
+  .footnote { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 16px; line-height: 1.6; }
+  .disclaimer {
+    font-size: 11.5px; color: #6b7280; background: #f1f5f9; border-radius: 10px;
+    padding: 12px 14px; line-height: 1.5; margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>IVF VTE Risk Assessment</h1>
+  <div class="subtitle">Based on the British Fertility Society (2024) policy and practice guidance for VTE assessment and prevention in medically assisted reproduction. Outpatient use only.</div>
+
+  <div class="disclaimer">
+    This tool supports, but does not replace, clinical judgement. It is not exhaustive — consider additional risks in individual patients. Use for outpatient risk stratification prior to starting fertility treatment only.
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <label>On long-term anticoagulation, or requiring treatment-dose LMWH?</label>
+      <label class="switch">
+        <input type="checkbox" id="longTermAnticoag">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Pre-existing risk factors</div>
+    <div class="section-note">Tick all that apply.</div>
+
+    <div class="item">
+      <input type="checkbox" id="f_prevVTE" data-score="4">
+      <label for="f_prevVTE">Previous venous or arterial thromboembolism <span class="flag">(specialist assessment required; event within last 3 months is very high risk)</span></label>
+      <div class="pts">4</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_valvular" data-score="4">
+      <label for="f_valvular">Valvular heart disease incl. prosthetic valves <span class="flag">(specialist input required)</span></label>
+      <div class="pts">4</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_highRiskThrombophilia" data-score="4">
+      <label for="f_highRiskThrombophilia">High risk thrombophilia: antithrombin deficiency, protein C or S deficiency</label>
+      <div class="pts">4</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_compoundThrombophilia" data-score="4">
+      <label for="f_compoundThrombophilia">Compound heterozygous or homozygous for low-risk thrombophilia (factor V Leiden or G20210A prothrombin mutation)</label>
+      <div class="pts">4</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_thromboticAPS" data-score="4">
+      <label for="f_thromboticAPS">Thrombotic APS (lupus anticoagulant, moderate/high anti-ß2 glycoprotein 1 and/or anticardiolipin antibodies) <span class="flag">(specialist input required)</span></label>
+      <div class="pts">4</div>
+    </div>
+
+    <div class="item" style="flex-direction: column; align-items: stretch;">
+      <div style="display:flex; gap:10px; align-items:flex-start;">
+        <input type="checkbox" id="f_cancerToggle">
+        <label for="f_cancerToggle">Cancer <span class="flag">(specialist input required)</span></label>
+        <div class="pts" id="cancerPts">0</div>
+      </div>
+      <select class="cancer-select" id="cancerType" disabled>
+        <option value="0">Select type…</option>
+        <option value="1">Breast cancer (low risk) — 1</option>
+        <option value="4">Most pelvic cancers — 4</option>
+        <option value="4">Myeloproliferative neoplasms — 4</option>
+        <option value="2">Other cancer type — score varies (2–3), confirm with specialist</option>
+      </select>
+    </div>
+
+    <div class="item">
+      <input type="checkbox" id="f_comorbidities" data-score="3">
+      <label for="f_comorbidities">Medical co-morbidities: heart failure, inflammatory/autoimmune conditions (e.g. active SLE, IBD), nephrotic syndrome, Type 1 diabetes with nephropathy, sickle cell disease, thalassaemia (excl. trait) <span class="flag">(specialist input required)</span></label>
+      <div class="pts">3</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_obstetricAPS" data-score="3">
+      <label for="f_obstetricAPS">Obstetric APS, persistent antiphospholipid antibodies <span class="flag">(specialist input required)</span></label>
+      <div class="pts">3</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_cvc" data-score="3">
+      <label for="f_cvc">Central venous catheter</label>
+      <div class="pts">3</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_recentCycle" data-score="1">
+      <label for="f_recentCycle">IVF-ET/oocyte or embryo cryopreservation/medicated FET cycle completed within previous 4 weeks</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_heteroThrombophilia" data-score="1">
+      <label for="f_heteroThrombophilia">Heterozygous for factor V Leiden or G20210A prothrombin mutation, no previous VTE</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_famVTE" data-score="1">
+      <label for="f_famVTE">Family history of VTE and/or thrombophilia in a first degree relative</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_famArterial" data-score="1">
+      <label for="f_famArterial">Family history of premature arterial disease</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_bmi" data-score="1">
+      <label for="f_bmi">BMI &gt;30 kg/m&sup2;</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_age" data-score="1">
+      <label for="f_age">Age &gt; 40 years</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_drugs" data-score="1">
+      <label for="f_drugs">Drugs e.g. chemotherapy, long-term tamoxifen/clomiphene</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_parity" data-score="1">
+      <label for="f_parity">Parity &ge; 3</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_smoker" data-score="1">
+      <label for="f_smoker">Smoker</label>
+      <div class="pts">1</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Issues during treatment</div>
+    <div class="section-note">During treatment, ensuing pregnancy, or within 28 days of a negative pregnancy test.</div>
+
+    <div class="item">
+      <input type="checkbox" id="f_ohss" data-score="4">
+      <label for="f_ohss">Ovarian hyperstimulation syndrome</label>
+      <div class="pts">4</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_surgicalProcedure" data-score="3">
+      <label for="f_surgicalProcedure">Additional surgical procedure, excluding egg collection</label>
+      <div class="pts">3</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_immobility" data-score="1">
+      <label for="f_immobility">Immobility</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_dehydration" data-score="1">
+      <label for="f_dehydration">Dehydration</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_infection" data-score="1">
+      <label for="f_infection">Systemic infection (including SARS-CoV-2)</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_travel" data-score="1">
+      <label for="f_travel">Long distance travel (&gt;4 hours within last 4 weeks)</label>
+      <div class="pts">1</div>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="f_hyperemesis" data-score="1">
+      <label for="f_hyperemesis">Hyperemesis</label>
+      <div class="pts">1</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Contraindications/cautions to LMWH</div>
+    <div class="section-note">Not part of the score. Any tick should prompt liaison with a specialist to evaluate whether bleeding risk precludes pharmacological prophylaxis.</div>
+
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_bleeding">
+      <label for="c_bleeding">Active bleeding</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_thrombocytopenia">
+      <label for="c_thrombocytopenia">Thrombocytopenia (platelets &lt;50 x10&sup9;/L)</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_hypertension">
+      <label for="c_hypertension">Uncontrolled systolic hypertension (230/120 mmHg or higher)</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_stroke">
+      <label for="c_stroke">New stroke</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_bleedingDisorder">
+      <label for="c_bleedingDisorder">Known bleeding disorder</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_hit">
+      <label for="c_hit">Previous heparin induced thrombocytopenia (HIT) or allergy to LMWH/heparin</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" class="caution" id="c_pregBleeding">
+      <label for="c_pregBleeding">Bleeding in pregnancy/presence of subchorionic haematoma</label>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate risk</button>
+
+  <div class="card result-card">
+    <div id="resultArea">
+      <div class="placeholder">Tick applicable risk factors above, then tap Calculate</div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    Balachandren N, Seshadri S, Yasmin E, Saab W, Gates C, Sayar Z, Cohen H, Webber L. Venous thromboembolism associated with medically assisted reproduction (MAR): British Fertility Society policy and practice guidance for assessment and prevention. Human Fertility. 2024;27(1):2352387. Open access, CC BY 4.0.
+  </div>
+</div>
+
+<script>
+  const cancerToggle = document.getElementById('f_cancerToggle');
+  const cancerSelect = document.getElementById('cancerType');
+  const cancerPts = document.getElementById('cancerPts');
+
+  cancerToggle.addEventListener('change', () => {
+    cancerSelect.disabled = !cancerToggle.checked;
+    if (!cancerToggle.checked) {
+      cancerSelect.value = "0";
+      cancerPts.textContent = "0";
+    }
+  });
+  cancerSelect.addEventListener('change', () => {
+    cancerPts.textContent = cancerToggle.checked ? cancerSelect.value : "0";
+  });
+
+  function calculate() {
+    const scoreCheckboxes = document.querySelectorAll('input[type="checkbox"][data-score]');
+    let total = 0;
+    let specialistFlags = [];
+
+    scoreCheckboxes.forEach(cb => {
+      if (cb.checked) {
+        total += parseInt(cb.dataset.score, 10);
+      }
+    });
+
+    if (cancerToggle.checked) {
+      total += parseInt(cancerSelect.value || "0", 10);
+    }
+
+    // Specialist-input flags regardless of score
+    const specialistIds = {
+      f_prevVTE: 'Previous VTE/arterial thromboembolism',
+      f_valvular: 'Valvular heart disease / prosthetic valve',
+      f_thromboticAPS: 'Thrombotic APS',
+      f_cancerToggle: 'Cancer',
+      f_comorbidities: 'Medical co-morbidities',
+      f_obstetricAPS: 'Obstetric APS / persistent antiphospholipid antibodies'
+    };
+    Object.keys(specialistIds).forEach(id => {
+      if (document.getElementById(id).checked) specialistFlags.push(specialistIds[id]);
+    });
+
+    const longTermAnticoag = document.getElementById('longTermAnticoag').checked;
+
+    const cautions = document.querySelectorAll('input.caution');
+    let cautionFlags = [];
+    cautions.forEach(cb => {
+      if (cb.checked) cautionFlags.push(cb.nextElementSibling.textContent);
+    });
+
+    let riskLabel, riskColor, guidance;
+
+    if (total >= 4) {
+      riskLabel = 'High risk';
+      riskColor = '#dc2626';
+      guidance = [
+        'Refer to a specialist prior to starting any fertility treatment.',
+        'LMWH is the anticoagulant of choice for prophylaxis/treatment during IVF.',
+        'Consider modifying the standard IVF protocol to one associated with lower VTE risk.',
+        'Consider omitting pre-treatment with a progestogen and/or oestrogen; if this cannot be omitted, start LMWH with the start of potentially thrombogenic hormone treatment.',
+        'LMWH should be commenced with ovarian stimulation, unless already started with pre-treatment.',
+        'Interrupt LMWH for oocyte retrieval to reduce bleeding risk — last dose at least 24 hours prior (per bridging plan). Recommence 6–12 hours after, no later than 24 hours.',
+        'Natural rather than medicated cycles should be used for FET where possible; LMWH commenced with a positive pregnancy test or as soon as practicable after.',
+        'If a medicated FET cycle is used, LMWH should start from potentially thrombogenic pre-treatment or the start of oestrogen therapy, whichever is sooner.',
+        'If no pregnancy after an uncomplicated cycle, consider stopping LMWH 2–4 weeks after the start of the menstrual period (or after all hormone support has stopped, for medicated FET).',
+        'If OHSS occurred without embryo transfer/pregnancy, consider continuing prophylaxis for 4 weeks after symptoms resolve.'
+      ];
+    } else if (total === 3) {
+      riskLabel = 'Intermediate risk';
+      riskColor = '#f59e0b';
+      guidance = [
+        'Commence LMWH 6–12 hours after oocyte retrieval depending on bleeding risk as assessed by the operator, but no longer than 24 hours later.',
+        'If a medicated FET cycle is used, LMWH should be given from the start of potentially thrombogenic pre-treatment or with the start of oestrogen therapy, whichever is sooner.',
+        'In the absence of pregnancy after an uncomplicated cycle, consider stopping LMWH when the menstrual period starts.',
+        'If OHSS has occurred without embryo transfer/pregnancy, consider discontinuing prophylaxis with the start of the menstrual period or resolution of symptoms, whichever is later.'
+      ];
+    } else {
+      riskLabel = 'Lower risk';
+      riskColor = '#16a34a';
+      guidance = [
+        'Pharmacological prophylaxis is not required (unless OHSS occurs).'
+      ];
+    }
+
+    let html = `
+      <div class="result-top">
+        <div class="result-label">VTE risk score</div>
+        <div class="result-score">${total}</div>
+        <div class="result-badge" style="background-color:${riskColor}20;color:${riskColor}">${riskLabel}</div>
+      </div>
+    `;
+
+    if (longTermAnticoag) {
+      html += `<div class="specialist-banner"><strong>Long-term anticoagulation / treatment-dose LMWH indicated:</strong> requires an individualised treatment plan from a specialist, including a bridging plan for oocyte retrieval, regardless of score.</div>`;
+    }
+
+    if (specialistFlags.length > 0) {
+      html += `<div class="specialist-banner"><strong>Specialist/multidisciplinary input required</strong> due to: ${specialistFlags.join(', ')}.</div>`;
+    }
+
+    if (cautionFlags.length > 0) {
+      html += `<div class="caution-banner"><strong>Caution — possible contraindication to LMWH:</strong> ${cautionFlags.join(', ')}. Liaise with a specialist in thrombosis and bleeding to evaluate if bleeding risk precludes pharmacological prophylaxis.</div>`;
+    }
+
+    html += `<div class="guidance-title">Management guidance (${riskLabel}, per BFS 2024 Appendix B)</div><ul class="guidance-list">`;
+    guidance.forEach(g => { html += `<li>${g}</li>`; });
+    html += `</ul>`;
+
+    html += `<div class="guidance-list" style="margin-top:10px;"><li style="list-style:none; margin-left:-18px;"><strong>All risk levels:</strong> follow RCOG guidelines (or local equivalent) in pregnancy or if OHSS occurs. Re-assess after a positive pregnancy test and/or if OHSS develops.</li></ul>`;
+
+    document.getElementById('resultArea').innerHTML = html;
+  }
+</script>
+</body>
+</html>
